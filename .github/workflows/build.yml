@@ -26,6 +26,18 @@ jobs:
             xcode-select -p
           fi
 
+      - name: Patch rules_apple Xcode check
+        run: |
+          python3 -c '
+          filepath = "build-system/bazel-rules/rules_apple/apple/internal/resource_actions/actool.bzl"
+          with open(filepath, "r") as f:
+              content = f.read()
+          content = content.replace("apple_common.dotted_version(\"26.0\")", "apple_common.dotted_version(\"15.0\")")
+          with open(filepath, "w") as f:
+              f.write(content)
+          print("Submodule rules_apple patched successfully!")
+          '
+
       - name: Create canonical source directory
         run: |
           set -x
