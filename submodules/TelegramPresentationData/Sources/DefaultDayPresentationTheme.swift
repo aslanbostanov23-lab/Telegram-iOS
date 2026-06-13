@@ -5,6 +5,7 @@ import TelegramCore
 import TelegramUIPreferences
 import Postbox
 import SwiftSignalKit
+import SGSimpleSettings
 
 public func selectDateFillStaticColor(theme: PresentationTheme, wallpaper: TelegramWallpaper) -> UIColor {
     if case .color(0xffffff) = wallpaper {
@@ -54,7 +55,13 @@ public func dateFillNeedsBlur(theme: PresentationTheme, wallpaper: TelegramWallp
 
 public let defaultServiceBackgroundColor = UIColor(rgb: 0x000000, alpha: 0.2)
 public let defaultPresentationTheme = makeDefaultDayPresentationTheme(serviceBackgroundColor: defaultServiceBackgroundColor, day: false, preview: false)
-public let defaultDayAccentColor = UIColor(rgb: 0x0088ff)
+public var defaultDayAccentColor: UIColor {
+    if SGSimpleSettings.shared.royalPurpleTheme {
+        return UIColor(rgb: 0x7e3ff2)
+    } else {
+        return UIColor(rgb: 0x0088ff)
+    }
+}
 
 public func customizeDefaultDayTheme(theme: PresentationTheme, editing: Bool, title: String?, accentColor: UIColor?, outgoingAccentColor: UIColor?, backgroundColors: [UInt32], bubbleColors: [UInt32], animateBubbleColors: Bool?, wallpaper forcedWallpaper: TelegramWallpaper? = nil, serviceBackgroundColor: UIColor?) -> PresentationTheme {
     if (theme.referenceTheme != .day && theme.referenceTheme != .dayClassic) {

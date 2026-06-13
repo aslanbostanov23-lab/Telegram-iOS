@@ -277,3 +277,11 @@
 "Settings.NY.Style.snow" = "Snow";
 "Settings.NY.Style.lightning" = "Lightning";
 "Settings.NY.Notice" = "Available for a limited time only!";
+
+"Settings.AntiDelete" = "Anti-Delete Messages";
+"Settings.AntiDelete.Notice" = "Keeps incoming messages deleted by other users. They will remain in your chats marked with 🗑️.";
+"Settings.GhostMode" = "Ghost Mode";
+"Settings.GhostMode.Notice" = "Blocks sending read receipts and hides typing/activity status.";
+"Settings.RoyalPurpleTheme" = "Royal Purple Style";
+"Settings.RoyalPurpleTheme.Notice" = "Tints application accent elements and outgoing messages into premium purple colors.";
+

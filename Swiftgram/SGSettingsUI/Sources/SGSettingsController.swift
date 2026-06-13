@@ -106,6 +106,9 @@ private enum SGBoolSetting: String {
     case nyStyleSnow
     case nyStyleLightning
     case tabBarSearchEnabled
+    case antiDelete
+    case ghostMode
+    case royalPurpleTheme
 }
 
 private enum SGOneFromManySetting: String {
@@ -305,6 +308,13 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
     
     id.increment(10000)
     entries.append(.header(id: id.count, section: .other, text: strings.Appearance_Other.uppercased(), badge: nil))
+    entries.append(.toggle(id: id.count, section: .other, settingName: .antiDelete, value: SGSimpleSettings.shared.antiDelete, text: i18n("Settings.AntiDelete", lang), enabled: true))
+    entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.AntiDelete.Notice", lang)))
+    entries.append(.toggle(id: id.count, section: .other, settingName: .ghostMode, value: SGSimpleSettings.shared.ghostMode, text: i18n("Settings.GhostMode", lang), enabled: true))
+    entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.GhostMode.Notice", lang)))
+    entries.append(.toggle(id: id.count, section: .other, settingName: .royalPurpleTheme, value: SGSimpleSettings.shared.royalPurpleTheme, text: i18n("Settings.RoyalPurpleTheme", lang), enabled: true))
+    entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.RoyalPurpleTheme.Notice", lang)))
+    
     entries.append(.toggle(id: id.count, section: .other, settingName: .swipeForVideoPIP, value: SGSimpleSettings.shared.videoPIPSwipeDirection == SGSimpleSettings.VideoPIPSwipeDirection.up.rawValue, text: i18n("Settings.swipeForVideoPIP", lang), enabled: true))
     entries.append(.notice(id: id.count, section: .other, text: i18n("Settings.swipeForVideoPIP.Notice", lang)))
     entries.append(.toggle(id: id.count, section: .other, settingName: .hideChannelBottomButton, value: !SGSimpleSettings.shared.hideChannelBottomButton, text: i18n("Settings.showChannelBottomButton", lang), enabled: true))
@@ -521,6 +531,13 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         case .nyStyleLightning:
             SGSimpleSettings.shared.nyStyle = value ? SGSimpleSettings.NYStyle.lightning.rawValue : SGSimpleSettings.NYStyle.default.rawValue
             simplePromise.set(true) // Trigger update for 'enabled' field of other toggles
+        case .antiDelete:
+            SGSimpleSettings.shared.antiDelete = value
+        case .ghostMode:
+            SGSimpleSettings.shared.ghostMode = value
+        case .royalPurpleTheme:
+            SGSimpleSettings.shared.royalPurpleTheme = value
+            askForRestart?()
         }
     }, updateSliderValue: { setting, value in
         switch (setting) {

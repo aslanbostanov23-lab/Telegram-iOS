@@ -4,6 +4,7 @@ import SwiftSignalKit
 import TelegramApi
 import MtProtoKit
 import EncryptionProvider
+import SGSimpleSettings
 
 private func reactionGeneratedEvent(_ previousReactions: ReactionsMessageAttribute?, _ updatedReactions: ReactionsMessageAttribute?, message: Message, transaction: Transaction) -> (reactionAuthor: Peer, reaction: MessageReaction.Reaction, message: Message, timestamp: Int32)? {
     if let updatedReactions = updatedReactions, !message.flags.contains(.Incoming), message.id.peerId.namespace == Namespaces.Peer.CloudUser {
@@ -4429,14 +4430,23 @@ func replayFinalState(
                     }
                 }
             case let .DeleteMessagesWithGlobalIds(ids):
-                var resourceIds: [MediaResourceId] = []
-                transaction.deleteMessagesWithGlobalIds(ids, forEachMedia: { media in
-                    addMessageMediaResourceIdsToRemove(media: media, resourceIds: &resourceIds)
-                })
-                if !resourceIds.isEmpty {
-                    let _ = mediaBox.removeCachedResources(Array(Set(resourceIds)), force: true).start()
+                let messageIds = transaction.messageIdsForGlobalIds(ids)
+                var actualDeletedIds: [MessageId] = []
+                for id in messageIds {
+                    if let message = transaction.getMessage(id) {
+                        let isIncoming = message.flags.contains(.Incoming)
+                        let isUserDelete = SGSimpleSettings.shared.isInteractivelyDeleted(peerId: id.peerId.toInt64(), namespace: id.namespace, id: id.id)
+                        if SGSimpleSettings.shared.antiDelete && isIncoming && !isUserDelete {
+                            // Не добавляем в удаленные
+                        } else {
+                            actualDeletedIds.append(id)
+                        }
+                    } else {
+                        actualDeletedIds.append(id)
+                    }
                 }
-                deletedMessageIds.append(contentsOf: ids.map { .global($0) })
+                _internal_deleteMessages(transaction: transaction, mediaBox: mediaBox, ids: messageIds)
+                deletedMessageIds.append(contentsOf: actualDeletedIds.map { .messageId($0) })
             case let .DeleteMessages(ids):
                 _internal_deleteMessages(transaction: transaction, mediaBox: mediaBox, ids: ids, manualAddMessageThreadStatsDifference: { id, add, remove in
                     addMessageThreadStatsDifference(threadKey: id, remove: remove, addedMessagePeer: nil, addedMessageId: nil, isOutgoing: false)

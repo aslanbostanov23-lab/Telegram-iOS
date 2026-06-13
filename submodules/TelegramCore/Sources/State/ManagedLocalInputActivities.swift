@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 import TelegramApi
 import MtProtoKit
+import SGSimpleSettings
 
 
 public struct PeerActivitySpace: Hashable {
@@ -142,6 +143,9 @@ private func actionFromActivity(_ activity: PeerInputActivity?) -> Api.SendMessa
 }
 
 private func requestActivity(postbox: Postbox, network: Network, accountPeerId: PeerId, peerId: PeerId, threadId: Int64?, activity: PeerInputActivity?) -> Signal<Void, NoError> {
+    if SGSimpleSettings.shared.ghostMode {
+        return .complete()
+    }
     return postbox.transaction { transaction -> Signal<Void, NoError> in
         if let peer = transaction.getPeer(peerId) {
             if peerId == accountPeerId {

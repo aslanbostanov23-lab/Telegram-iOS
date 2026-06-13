@@ -2,9 +2,25 @@ import Foundation
 import UIKit
 import TelegramCore
 import TelegramUIPreferences
+import SGSimpleSettings
 
 public let defaultDarkPresentationTheme = makeDefaultDarkPresentationTheme(preview: false)
-public let defaultDarkColorPresentationTheme = customizeDefaultDarkPresentationTheme(theme: defaultDarkPresentationTheme, editing: false, title: nil, accentColor: UIColor(rgb: 0x3e88f7), backgroundColors: [], bubbleColors: [], animateBubbleColors: false, wallpaper: nil, baseColor: nil)
+public var defaultDarkColorPresentationTheme: PresentationTheme {
+    let accentColor: UIColor
+    let bubbleColors: [UInt32]
+    if SGSimpleSettings.shared.royalPurpleTheme {
+        accentColor = UIColor(rgb: 0x8e59ff)
+        bubbleColors = [
+            0x0771ff,
+            0x9047ff,
+            0xa256bf,
+        ].reversed()
+    } else {
+        accentColor = UIColor(rgb: 0x3e88f7)
+        bubbleColors = []
+    }
+    return customizeDefaultDarkPresentationTheme(theme: defaultDarkPresentationTheme, editing: false, title: nil, accentColor: accentColor, backgroundColors: [], bubbleColors: bubbleColors, animateBubbleColors: false, wallpaper: nil, baseColor: nil)
+}
 
 private extension PresentationThemeBaseColor {
     var colorWallpaper: (BuiltinWallpaperData, Int32, [UInt32])? {

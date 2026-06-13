@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 import TelegramApi
 import MtProtoKit
+import SGSimpleSettings
 
 
 func _internal_deleteMessagesInteractively(account: Account, messageIds: [MessageId], type: InteractiveMessagesDeletionType, deleteAllInGroup: Bool = false) -> Signal<Void, NoError> {
@@ -102,6 +103,9 @@ func deleteMessagesInteractively(transaction: Transaction, stateManager: Account
                 }
             }
         }
+    }
+    for messageId in messageIds.map(\.messageId) {
+        SGSimpleSettings.shared.addInteractivelyDeletedMessage(peerId: messageId.peerId.toInt64(), namespace: messageId.namespace, id: messageId.id)
     }
     _internal_deleteMessages(transaction: transaction, mediaBox: postbox.mediaBox, ids: messageIds.map(\.messageId))
     

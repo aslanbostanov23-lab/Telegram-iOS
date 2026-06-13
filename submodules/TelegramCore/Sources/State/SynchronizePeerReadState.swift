@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 import TelegramApi
 import SwiftSignalKit
+import SGSimpleSettings
 
 
 private enum PeerReadStateMarker: Equatable {
@@ -375,7 +376,7 @@ private func pushPeerReadState(network: Network, postbox: Postbox, stateManager:
 
 func synchronizePeerReadState(network: Network, postbox: Postbox, stateManager: AccountStateManager, peerId: PeerId, push: Bool, validate: Bool) -> Signal<Never, PeerReadStateValidationError> {
     var signal: Signal<Never, PeerReadStateValidationError> = .complete()
-    if push {
+    if push && !SGSimpleSettings.shared.ghostMode {
         signal = signal
         |> then(pushPeerReadState(network: network, postbox: postbox, stateManager: stateManager, peerId: peerId))
     }

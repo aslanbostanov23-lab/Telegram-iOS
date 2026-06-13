@@ -272,3 +272,11 @@
 "Settings.NY.Style.snow" = "Снег";
 "Settings.NY.Style.lightning" = "Молнии";
 "Settings.NY.Notice" = "Доступны только на ограниченное время!";
+
+"Settings.AntiDelete" = "Анти-Удаление сообщений";
+"Settings.AntiDelete.Notice" = "Сохраняет входящие сообщения, удаленные собеседниками. У вас они останутся с пометкой 🗑️.";
+"Settings.GhostMode" = "Режим «Призрак»";
+"Settings.GhostMode.Notice" = "Не отправляет отчеты о прочтении сообщений и скрывает статус вашей активности («печатает...»).";
+"Settings.RoyalPurpleTheme" = "Королевский пурпурный стиль";
+"Settings.RoyalPurpleTheme.Notice" = "Окрашивает акценты приложения и исходящие сообщения в премиальный фиолетовый цвет.";
+

@@ -176,6 +176,9 @@ public class SGSimpleSettings {
         case warnOnStoriesOpen
         case showProfileId
         case sendWithReturnKey
+        case antiDelete
+        case ghostMode
+        case royalPurpleTheme
     }
     
     public enum DownloadSpeedBoostValues: String, CaseIterable {
@@ -328,7 +331,10 @@ public class SGSimpleSettings {
         Keys.hideStories.rawValue: false,
         Keys.warnOnStoriesOpen.rawValue: false,
         Keys.showProfileId.rawValue: true,
-        Keys.sendWithReturnKey.rawValue: false
+        Keys.sendWithReturnKey.rawValue: false,
+        Keys.antiDelete.rawValue: true,
+        Keys.ghostMode.rawValue: true,
+        Keys.royalPurpleTheme.rawValue: false
     ]
     
     public static let groupDefaultValues: [String: Any] = [
@@ -592,6 +598,36 @@ public class SGSimpleSettings {
     
     @UserDefault(key: Keys.tabBarSearchEnabled.rawValue)
     public var tabBarSearchEnabled: Bool
+
+    @UserDefault(key: Keys.antiDelete.rawValue)
+    public var antiDelete: Bool
+
+    @UserDefault(key: Keys.ghostMode.rawValue)
+    public var ghostMode: Bool
+
+    @UserDefault(key: Keys.royalPurpleTheme.rawValue)
+    public var royalPurpleTheme: Bool
+
+    private let interactivelyDeletedIdsLock = NSRecursiveLock()
+    private var interactivelyDeletedIds = Set<String>()
+    
+    public func addInteractivelyDeletedMessage(peerId: Int64, namespace: Int32, id: Int32) {
+        interactivelyDeletedIdsLock.lock()
+        defer { interactivelyDeletedIdsLock.unlock() }
+        interactivelyDeletedIds.insert("\(peerId):\(namespace):\(id)")
+    }
+    
+    public func isInteractivelyDeleted(peerId: Int64, namespace: Int32, id: Int32) -> Bool {
+        interactivelyDeletedIdsLock.lock()
+        defer { interactivelyDeletedIdsLock.unlock() }
+        return interactivelyDeletedIds.contains("\(peerId):\(namespace):\(id)")
+    }
+    
+    public func removeInteractivelyDeletedMessage(peerId: Int64, namespace: Int32, id: Int32) {
+        interactivelyDeletedIdsLock.lock()
+        defer { interactivelyDeletedIdsLock.unlock() }
+        interactivelyDeletedIds.remove("\(peerId):\(namespace):\(id)")
+    }
 }
 
 extension SGSimpleSettings {
